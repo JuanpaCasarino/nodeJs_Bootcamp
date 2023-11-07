@@ -2,6 +2,7 @@ import { Router } from "express";
 import  express  from "express";
 import https from 'https'
 import config from "../config/config.js";
+import { getUrlImageBuffer } from "../middlewares/getImage.js";
 
 const callbackPokemonResponse = (res) => {
     let data = [];
@@ -38,7 +39,28 @@ const popPokemons = (req, res)=>{
     }    
 }
 
-const pokemonByName = (req, res)=>{
+const pokeByName = (req, res)=>{
+  const name =req.params.name;
+
+  https.get(`https://pokeapi.co/api/v2/pokemon/${name}`, (response) => {
+    let data = [];
+    response.on('data', chunk => {
+
+      data.push(chunk);
+    });
+
+    response.on('end', async () => {      
+      const pokemon = JSON.parse(Buffer.concat(data).toString());  
+      const abilities= []
+      pokemon.abilities.forEach(p=>{
+        abilities.push(' '+p.ability.name)
+      })
+      res.send('Name: '+pokemon.name+' ----- Abilities: '+abilities+' ----- Height: '+pokemon.height);         
+    })
+  })
+}
+
+const imageByName = (req, res)=>{
     const name = req.params.name;
 
     if (!name) return res.status(400).send('pokemon name is missing')
@@ -61,4 +83,4 @@ const pokemonByName = (req, res)=>{
       });
 }
 
-export {getGeneral, popPokemons, pokemonByName}
+export {getGeneral, popPokemons, imageByName, pokeByName}
