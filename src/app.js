@@ -26,14 +26,9 @@ app.listen(config.port, (err)=>{
         console.log(err)
         return
     }
-    console.log("Server listening on port"+config.port)
+    console.log("Server listening on port "+config.port)
 })
 
-const pokemon ={
-    name: "prbando",
-    abilities: "pdawdaw",
-    height: 12
-}
-const newPoke = pokemons.addPoke(pokemon)
+
 export default app
 

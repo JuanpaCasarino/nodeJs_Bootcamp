@@ -2,7 +2,12 @@ import { Router } from "express";
 import  express  from "express";
 import https from 'https'
 import config from "../config/config.js";
+
+import { PokeServiceDB } from "../services/pokemonServices.js";
 import { getUrlImageBuffer } from "../middlewares/getImage.js";
+
+
+const pokemons = new PokeServiceDB()
 
 const callbackPokemonResponse = (res) => {
     let data = [];
@@ -27,12 +32,21 @@ const callbackPokemonResponse = (res) => {
   };
 
 const getGeneral = (req, res)=>{
+  const pokemon ={
+    name: "prbando",
+    abilities: "pdawdaw",
+    height: 12
+  }
+  const newPoke = pokemons.addPoke(pokemon)
     res.send("Hello World!")
 }
 
 const popPokemons = (req, res)=>{
     try {
         https.get('https://pokeapi.co/api/v2/pokemon?limit=300', callbackPokemonResponse)
+
+        
+
         res.status(200).send(`Sucesss ${new Date()}`)
     } catch (error) {
         res.status(400).send("Error: "+error)
