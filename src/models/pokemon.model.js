@@ -11,7 +11,7 @@ const pokeSchema = new mongoose.Schema({
         required: true,
       },
       abilities: {
-        type: String,
+        type: Array,
         required: false,
       },
       height: {
