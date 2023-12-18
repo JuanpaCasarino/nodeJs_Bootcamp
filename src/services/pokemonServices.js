@@ -7,7 +7,6 @@ export class PokeServiceDB {
     }
     async getPokeById(name){
         const poke = await pokemon.findOne({ name: name })
-        if(!name) return "No existe este Pokemon guardado en la base de datos"
         return poke
     }
 
@@ -15,7 +14,10 @@ export class PokeServiceDB {
         const { name, abilities, height } = info;
         
         const newPoke = await pokemon.create(info)
-        console.log("Pokemon agregado a la base de datos!")
-        return newProduct
+        console.log("Pokemon added to the DB:")
+        console.log("Name: "+newPoke.name)
+        console.log("Abilities: "+newPoke.abilities)
+        console.log("Height: "+newPoke.height)
+        return newPoke
     }
 }

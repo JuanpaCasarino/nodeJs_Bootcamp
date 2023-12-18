@@ -32,12 +32,6 @@ const callbackPokemonResponse = (res) => {
   };
 
 const getGeneral = (req, res)=>{
-  const pokemon ={
-    name: "prbando",
-    abilities: "pdawdaw",
-    height: 12
-  }
-  const newPoke = pokemons.addPoke(pokemon)
     res.send("Hello World!")
 }
 
@@ -53,25 +47,39 @@ const popPokemons = (req, res)=>{
     }    
 }
 
-const pokeByName = (req, res)=>{
+const pokeByName = async (req, res)=>{
   const name =req.params.name;
-
-  https.get(`https://pokeapi.co/api/v2/pokemon/${name}`, (response) => {
-    let data = [];
-    response.on('data', chunk => {
-
-      data.push(chunk);
-    });
-
-    response.on('end', async () => {      
-      const pokemon = JSON.parse(Buffer.concat(data).toString());  
-      const abilities= []
-      pokemon.abilities.forEach(p=>{
-        abilities.push(' '+p.ability.name)
+  const poke = await pokemons.getPokeById(name)
+  if(!poke) {
+    https.get(`https://pokeapi.co/api/v2/pokemon/${name}`, (response) => {
+      let data = [];
+      response.on('data', chunk => {
+  
+        data.push(chunk);
+      });
+  
+      response.on('end', async () => {      
+        const pokemon = JSON.parse(Buffer.concat(data).toString());  
+        const abilities= []
+        pokemon.abilities.forEach(p=>{
+          abilities.push(' '+p.ability.name)
+        }) 
+        const info = {
+          name: pokemon.name,
+          abilities,
+          height: pokemon.height
+          }
+        const newPoke = pokemons.addPoke(info)
+        console.log("This Pokemon wasn't on the DB!")
+        res.send('Name: '+pokemon.name+' ----- Abilities: '+abilities+' ----- Height: '+pokemon.height);         
       })
-      res.send('Name: '+pokemon.name+' ----- Abilities: '+abilities+' ----- Height: '+pokemon.height);         
     })
-  })
+  }else{
+    console.log("This Pokemon was already added to the DB!")
+    res.send('Name: '+poke.name+' ----- Abilities: '+poke.abilities+' ----- Height: '+poke.height);   
+  }
+
+  
 }
 
 const imageByName = (req, res)=>{
